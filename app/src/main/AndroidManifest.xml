@@ -16,7 +16,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".NewGameActivity" />
-        <activity android:name=".SavedGamesActivity"></activity>
+        <activity android:name=".SavedGamesActivity" />
+        <activity android:name=".GameMacroViewActivity"></activity>
     </application>
 
 </manifest>

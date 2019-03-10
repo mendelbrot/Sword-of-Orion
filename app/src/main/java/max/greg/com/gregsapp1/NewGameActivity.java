@@ -1,8 +1,10 @@
 package max.greg.com.gregsapp1;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 public class NewGameActivity extends AppCompatActivity {
 
@@ -22,5 +24,12 @@ public class NewGameActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp(){
         finish();
         return true;
+    }
+
+    public void startNewGame(final View view) {
+
+        Intent startNewGameIntent = new Intent(this, GameMacroViewActivity.class);
+        startNewGameIntent.putExtra("players", 4);
+        startActivity(startNewGameIntent);
     }
 }

@@ -1,10 +1,10 @@
 package max.greg.com.gregsapp1;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 import android.widget.GridView;
-import android.widget.Toast;
 
 public class GameMacroViewActivity extends AppCompatActivity {
 
@@ -21,7 +21,15 @@ public class GameMacroViewActivity extends AppCompatActivity {
         //Toast.makeText(this, Integer.toString(intent.getIntExtra("players", 0)), Toast.LENGTH_LONG).show();
 
         GridView macroGameGrid = findViewById(R.id.gridView);
-        ImageAdapter macroGridAdapter = new ImageAdapter(getApplicationContext(), macroGridSquares);
+        macroGameGrid.setNumColumns(4);
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int screenWidth = size.x;
+        int screenHeight = size.y;
+        double widthDenominator = 4.2;
+        macroGameGrid.setColumnWidth((int)(screenWidth/widthDenominator));
+        ImageAdapter macroGridAdapter = new ImageAdapter(getApplicationContext(), macroGridSquares, widthDenominator);
         macroGameGrid.setAdapter(macroGridAdapter);
     }
 

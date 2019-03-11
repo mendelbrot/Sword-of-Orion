@@ -6,17 +6,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.util.DisplayMetrics;
 
 public class ImageAdapter extends BaseAdapter {
 
     Context context;
     int imageIDs[];
+    double widthDenominator;
     LayoutInflater inflater;
 
-    public ImageAdapter(Context context, int[] imageIDs) {
+    public ImageAdapter(Context context, int[] imageIDs, double widthDenominator) {
         this.context = context;
         this.imageIDs = imageIDs;
         this.inflater = LayoutInflater.from(context);
+        this.widthDenominator = widthDenominator;
     }
 
     @Override
@@ -36,8 +39,13 @@ public class ImageAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
+        DisplayMetrics metrics = viewGroup.getResources().getDisplayMetrics();
+        int screenWidth = metrics.widthPixels;
         view = inflater.inflate(R.layout.activity_imageview, null);
         ImageView image = view.findViewById(R.id.image);
+        image.getLayoutParams().width = (int)(screenWidth/this.widthDenominator);
+        image.getLayoutParams().height = (int)(screenWidth/this.widthDenominator);
+        image.setPadding(16, 16, 16, 16);
         image.setImageResource(imageIDs[i]);
         return view;
     }

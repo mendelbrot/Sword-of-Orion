@@ -1,24 +1,43 @@
 package max.greg.com.gregsapp1;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.app.AlertDialog;
+import android.widget.TextView;
+import android.widget.EditText;
 
-public class GameMacroViewActivity extends AppCompatActivity {
+import java.io.Serializable;
+
+public class GameMacroViewActivity extends AppCompatActivity implements Serializable {
 
     GridView macroGameGrid;
+    Intent fromParent;
+    public GameMap gameMap;
+    int macroGridSquares[];
+    String saveName = "";
+    DBAdapter db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_macro_view);
-
         getSupportActionBar().setTitle(null);
 
-        //final Intent intent = getIntent();
-        //Toast.makeText(this, Integer.toString(intent.getIntExtra("players", 0)), Toast.LENGTH_LONG).show();
+        db = new DBAdapter(this);
+
+        fromParent = getIntent();
+        gameMap = new GameMap(fromParent.getIntExtra("stars", 5), fromParent.getIntExtra("planets", 2));
+        macroGridSquares = gameMap.getMacroGridImages();
 
         GridView macroGameGrid = findViewById(R.id.gridView);
         macroGameGrid.setNumColumns(4);
@@ -26,25 +45,72 @@ public class GameMacroViewActivity extends AppCompatActivity {
         Point size = new Point();
         display.getSize(size);
         int screenWidth = size.x;
-        int screenHeight = size.y;
         double widthDenominator = 4.2;
         macroGameGrid.setColumnWidth((int)(screenWidth/widthDenominator));
+
         ImageAdapter macroGridAdapter = new ImageAdapter(getApplicationContext(), macroGridSquares, widthDenominator);
         macroGameGrid.setAdapter(macroGridAdapter);
+
+        macroGameGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                MacroSquare selectedSquare = gameMap.macroSquares[position];
+                int[] selectedSystemImages;
+                if (selectedSquare.starSystem != null) {
+                    selectedSystemImages = selectedSquare.starSystem.getStarSystemImages();
+                    Intent intent = new Intent(GameMacroViewActivity.this, MicroViewActivity.class);
+                    intent.putExtra("starSystem", selectedSystemImages);
+
+                    startActivityForResult(intent, 0);
+                }
+
+            }
+        });
     }
 
-    //fake data for grid squares
-    int a = R.drawable.alphacentauri;
-    int macroGridSquares[] = {
-        a, a, a, a,
-        a, a, a, a,
-        a, a, a, a,
-        a, a, a, a,
-        a, a, a, a,
-        a, a, a, a
-    };
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        menu.setGroupDividerEnabled(true);
 
+        getMenuInflater().inflate(
+                R.menu.game_menu, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.saveGameButton:
 
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Title");
 
+                final EditText input = new EditText(this);
+                input.setText(saveName);
+                builder.setView(input);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        saveName = input.getText().toString();
+                        db.open();
+                        db.saveGame(saveName, gameMap);
+                        db.close();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+
+            case R.id.exitGameButton:
+                //TODO
+            case R.id.quitButton:
+                //TODO
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

@@ -17,7 +17,9 @@
         </activity>
         <activity android:name=".NewGameActivity" />
         <activity android:name=".SavedGamesActivity" />
-        <activity android:name=".GameMacroViewActivity"></activity>
+        <activity android:name=".GameMacroViewActivity" />
+        <activity android:name=".MicroViewActivity" />
+
     </application>
 
 </manifest>

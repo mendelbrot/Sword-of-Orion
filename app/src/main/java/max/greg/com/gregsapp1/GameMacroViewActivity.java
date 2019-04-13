@@ -26,20 +26,27 @@ public class GameMacroViewActivity extends AppCompatActivity implements Serializ
     int macroGridSquares[];
     String saveName = "";
     DBAdapter db;
+    ImageAdapter macroGridAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_macro_view);
         getSupportActionBar().setTitle(null);
-
         db = new DBAdapter(this);
-
         fromParent = getIntent();
-        gameMap = new GameMap(fromParent.getIntExtra("stars", 5), fromParent.getIntExtra("planets", 2));
+        String save = fromParent.getStringExtra("saveName");
+        if (save != null && !save.isEmpty()) {
+            db.open();
+            gameMap = db.getMap(save);
+            db.close();
+            this.saveName = save;
+        } else {
+            gameMap = new GameMap(fromParent.getIntExtra("stars", 5), fromParent.getIntExtra("planets", 2));
+        }
         macroGridSquares = gameMap.getMacroGridImages();
 
-        GridView macroGameGrid = findViewById(R.id.gridView);
+        macroGameGrid = findViewById(R.id.gridView);
         macroGameGrid.setNumColumns(4);
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -48,7 +55,7 @@ public class GameMacroViewActivity extends AppCompatActivity implements Serializ
         double widthDenominator = 4.2;
         macroGameGrid.setColumnWidth((int)(screenWidth/widthDenominator));
 
-        ImageAdapter macroGridAdapter = new ImageAdapter(getApplicationContext(), macroGridSquares, widthDenominator);
+        macroGridAdapter = new ImageAdapter(getApplicationContext(), macroGridSquares, widthDenominator);
         macroGameGrid.setAdapter(macroGridAdapter);
 
         macroGameGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -61,6 +68,13 @@ public class GameMacroViewActivity extends AppCompatActivity implements Serializ
                     intent.putExtra("starSystem", selectedSystemImages);
 
                     startActivityForResult(intent, 0);
+                } else if (selectedSquare.starShip != null) {
+
+                    //randomly jump the starship when tapped
+                    gameMap.placeEnterprise();
+                    selectedSquare.starShip = null;
+                    macroGridSquares = gameMap.getMacroGridImages();
+                    refreshView(macroGridSquares);
                 }
 
             }
@@ -83,7 +97,7 @@ public class GameMacroViewActivity extends AppCompatActivity implements Serializ
             case R.id.saveGameButton:
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Title");
+                builder.setTitle("Save As");
 
                 final EditText input = new EditText(this);
                 input.setText(saveName);
@@ -93,6 +107,7 @@ public class GameMacroViewActivity extends AppCompatActivity implements Serializ
                     public void onClick(DialogInterface dialog, int which) {
                         saveName = input.getText().toString();
                         db.open();
+                        db.deleteGame(saveName);
                         db.saveGame(saveName, gameMap);
                         db.close();
                     }
@@ -112,5 +127,9 @@ public class GameMacroViewActivity extends AppCompatActivity implements Serializ
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void refreshView(int[] newImages) {
+        macroGridAdapter.refresh(newImages);
     }
 }

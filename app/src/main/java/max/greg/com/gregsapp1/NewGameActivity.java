@@ -28,10 +28,6 @@ public class NewGameActivity extends AppCompatActivity {
 
     public void startNewGame(final View view) {
 
-//        Intent startNewGameIntent = new Intent(this, GameMacroViewActivity.class);
-//        startNewGameIntent.putExtra("players", 4);
-//        startActivity(startNewGameIntent);
-
         Intent startNewGameIntent = new Intent(this, GameMacroViewActivity.class);
         startNewGameIntent.putExtra("stars", 10);
         startNewGameIntent.putExtra("planets", 4);

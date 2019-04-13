@@ -50,4 +50,10 @@ public class ImageAdapter extends BaseAdapter {
         return view;
     }
 
+    public void refresh(int[] newImageIDs) {
+
+        this.imageIDs = newImageIDs;
+        notifyDataSetChanged();
+    }
+
 }

@@ -1,6 +1,7 @@
 package max.greg.com.gregsapp1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,7 +18,7 @@ import android.widget.TextView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import java.util.ArrayList;
-
+import android.os.Bundle;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -68,7 +69,7 @@ public class ListAdapter extends BaseAdapter {
             public void onClick(View v) {
                 //System.out.println(textList[index]);
                 db.open();
-                System.out.println(db.getMap(textList.get(index)).getString(0));
+                //System.out.println(db.getMap(textList.get(index)).getString(0));
                 //db.deleteGame(textList[index]);
                 db.close();
                 PopupMenu options = new PopupMenu(context, v);
@@ -107,7 +108,11 @@ public class ListAdapter extends BaseAdapter {
     }
 
     public void startSelectedGame(String saveName) {
-        System.out.println(saveName);
+
+        Intent loadGameIntent = new Intent(context, GameMacroViewActivity.class);
+        loadGameIntent.putExtra("saveName", saveName);
+        loadGameIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(loadGameIntent);
     }
 
     public void removeAndRefresh(int index){

@@ -8,19 +8,19 @@ public class GameMap {
     public final int NUM_MACRO_SQUARES = 24;
     public static final int NUM_MICRO_SQUARES = 9;
     public final int PLANETS[] = {
-        R.drawable.earth,
-        R.drawable.europa,
-        R.drawable.jupiter,
-        R.drawable.mars,
-        R.drawable.moon,
-        R.drawable.saturn,
-        R.drawable.titan,
+            R.drawable.earth,
+            R.drawable.europa,
+            R.drawable.jupiter,
+            R.drawable.mars,
+            R.drawable.moon,
+            R.drawable.saturn,
+            R.drawable.titan,
     };
     public final int SUNS[] = {
-        R.drawable.blue,
-        R.drawable.purple,
-        R.drawable.red,
-        R.drawable.yellow,
+            R.drawable.blue,
+            R.drawable.purple,
+            R.drawable.red,
+            R.drawable.yellow,
     };
     public MacroSquare macroSquares[];
     public StarSystem starSystems[];
@@ -29,7 +29,21 @@ public class GameMap {
     public int maxPlanetsPerStar;
     public MathRepo repo;
 
-    GameMap() {}
+    GameMap(int numStars) {
+
+        this.numStars = numStars;
+
+        repo = new MathRepo();
+        macroSquares = new MacroSquare[NUM_MACRO_SQUARES];
+        for (int i = 0; i < macroSquares.length; i++) {
+            macroSquares[i] = new MacroSquare();
+        }
+        starSystems = new StarSystem[numStars];
+        for (int i = 0; i < starSystems.length; i++) {
+            starSystems[i] = new StarSystem(i);
+            starSystems[i].index = i;
+        }
+    }
 
     GameMap(int numStars, int maxPlanetsPerStar) {
 
@@ -39,11 +53,11 @@ public class GameMap {
 
         repo = new MathRepo();
         macroSquares = new MacroSquare[NUM_MACRO_SQUARES];
-        for (int i=0; i<macroSquares.length; i++) {
+        for (int i = 0; i < macroSquares.length; i++) {
             macroSquares[i] = new MacroSquare();
         }
         starSystems = new StarSystem[numStars];
-        for (int i=0; i<starSystems.length; i++) {
+        for (int i = 0; i < starSystems.length; i++) {
             starSystems[i] = new StarSystem(i);
             starSystems[i].index = i;
         }
@@ -53,14 +67,14 @@ public class GameMap {
         placeEnterprise();
     }
 
-    ////////////////////////////
-    // public utility methods //
-    ////////////////////////////
+    /////////////////////
+    // utility methods //
+    /////////////////////
 
     public int[] getMacroGridImages() {
         int[] gridImages = new int[NUM_MACRO_SQUARES];
 
-        for (int i = 0; i< NUM_MACRO_SQUARES; i++) {
+        for (int i = 0; i < NUM_MACRO_SQUARES; i++) {
             if (macroSquares[i].starSystem != null) {
                 gridImages[i] = macroSquares[i].starSystem.star;
             } else if (macroSquares[i].starShip != null) {
@@ -72,27 +86,14 @@ public class GameMap {
         return gridImages;
     }
 
-//    public int[] getStarSystemImages(int starSystemIndex) {
-//        int[] gridImages = new int[NUM_MICRO_SQUARES];
-//
-//        for (int i = 0; i< NUM_MICRO_SQUARES; i++) {
-//            if (starSystems[starSystemIndex].squares[i] != null) {
-//                gridImages[i] = starSystems[starSystemIndex].squares[i];
-//            } else {
-//                gridImages[i] = 0;
-//            }
-//        }
-//        return gridImages;
-//    }
+    /////////////////////////////
+    //  map generation methods //
+    /////////////////////////////
 
-    ////////////////////////////////////
-    // private map generation methods //
-    ////////////////////////////////////
-
-    private void placeStarSystems() {
+    public void placeStarSystems() {
         int[] selectedSquares = repo.chooseNRandomOfM(numStars, NUM_MACRO_SQUARES);
 
-        for (int i=0; i<numStars; i++) {
+        for (int i = 0; i < numStars; i++) {
             int selectedSquare = selectedSquares[i];
             int sun = SUNS[repo.chooseRandomIndex(SUNS.length)];
             starSystems[i].placeStar(sun);
@@ -100,9 +101,9 @@ public class GameMap {
         }
     }
 
-    private void placePlanets() {
+    public void placePlanets() {
         int numPlanets;
-        for (int i=0; i<numStars; i++) {
+        for (int i = 0; i < numStars; i++) {
             numPlanets = repo.chooseRandomNumber(0, maxPlanetsPerStar);
             totalNumPlanets += numPlanets;
             if (numPlanets > 0) {
@@ -122,11 +123,11 @@ public class GameMap {
         }
     }
 
-    private void placeEnterprise() {
+    public void placeEnterprise() {
 
         boolean hasPlacedEnterprise = false;
         int index;
-        while(!hasPlacedEnterprise) {
+        while (!hasPlacedEnterprise) {
             index = repo.chooseRandomIndex(NUM_MACRO_SQUARES);
             if (macroSquares[index].starSystem == null && macroSquares[index].starShip == null) {
                 macroSquares[index].placeStarShip(R.drawable.enterprise);
@@ -134,47 +135,4 @@ public class GameMap {
             }
         }
     }
-
-//    ///////////////////
-//    // inner classes //
-//    ///////////////////
-//    public class MacroSquare {
-//        public StarSystem starSystem;
-//        public Integer starShip;
-//
-//        MacroSquare() {}
-//
-//        MacroSquare(StarSystem starSystem) {
-//            this.starSystem = starSystem;
-//        }
-//
-//        public void placeStarSystem(StarSystem starSystem) {
-//            this.starSystem = starSystem;
-//        }
-//
-//        public void placeStarShip(int starShip) {
-//            this.starShip = starShip;
-//        }
-//    }
-//
-//    public class StarSystem {
-//        public Integer star;
-//        public Integer squares[];
-//
-//        StarSystem() {
-//            squares = new Integer[NUM_MICRO_SQUARES];
-//        }
-//
-//        StarSystem(int star) {
-//            squares = new Integer[NUM_MICRO_SQUARES];
-//
-//            this.star = star;
-//            squares[5] = star;
-//        }
-//
-//        public void placeStar(int star) {
-//            this.star = star;
-//            squares[5] = star;
-//        }
-//    }
 }

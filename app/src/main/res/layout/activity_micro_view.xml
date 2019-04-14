@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MicroViewActivity">
+    tools:context=".MicroViewActivity"
+    android:background="@android:color/holo_blue_dark">
 
     <GridView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/gridView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
         android:background="@color/colorPrimaryDark"
         android:stretchMode="spacingWidthUniform"
         android:gravity="center"

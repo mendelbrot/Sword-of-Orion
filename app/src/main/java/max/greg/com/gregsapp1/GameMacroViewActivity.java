@@ -119,14 +119,15 @@ public class GameMacroViewActivity extends AppCompatActivity implements Serializ
                     }
                 });
                 builder.show();
-
+                break;
             case R.id.exitGameButton:
-                //TODO
-            case R.id.quitButton:
-                //TODO
+                Intent exitGameIntent = new Intent(this, MainActivity.class);
+                startActivity(exitGameIntent);
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    return true;
     }
 
     public void refreshView(int[] newImages) {

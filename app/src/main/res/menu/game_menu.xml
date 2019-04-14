@@ -10,11 +10,7 @@
             app:showAsAction="never" />
         <item
             android:id="@+id/exitGameButton"
-            android:title="Exit"
-            app:showAsAction="never" />
-        <item
-            android:id="@+id/quitButton"
-            android:title="Quit"
+            android:title="Exit Game"
             app:showAsAction="never" />
     </group>
 
